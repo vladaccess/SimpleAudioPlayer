@@ -7,6 +7,7 @@ enum AudioPlayerError: Error {
 protocol Player {
     var isPlaying: Bool { get }
     var completionHandler: ((_ didFinish: Bool) -> Void)? { get set }
+    var volume: Float { get set }
     
     func play()
     func stop()
@@ -17,6 +18,25 @@ class AudioPlayer: NSObject {
     typealias SoundDidFinishCompletion = (_ didFinish: Bool) -> Void
     
     var completionHandler: SoundDidFinishCompletion?
+    
+    var isPlaying: Bool {
+        guard let notNilsound = player else {
+            return false
+        }
+        return notNilsound.isPlaying
+    }
+    
+    var volume: Float {
+        get {
+            guard let notNilPlayer = player else {
+                return 0.0
+            }
+            return notNilPlayer.volume
+        }
+        set {
+            player?.volume = volume
+        }
+    }
     
     private let url: URL
     private let name: String
@@ -52,13 +72,6 @@ class AudioPlayer: NSObject {
 }
 
 extension AudioPlayer: Player {
-    
-    var isPlaying: Bool {
-        guard let notNilsound = player else {
-            return false
-        }
-        return notNilsound.isPlaying
-    }
     
     func play() {
         guard !isPlaying else { return }
